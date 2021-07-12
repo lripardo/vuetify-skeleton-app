@@ -7,34 +7,23 @@ import vuetify from '@/plugins/vuetify';
 
 Vue.config.productionTip = false;
 
-function getItemIndex(array, item) {
-    if (item && item.id) {
-        const itemsWithSameId = array.filter(i => i.id === item.id);
-        if (itemsWithSameId.length > 0) {
-            const index = array.indexOf(itemsWithSameId[0]);
-            if (index !== -1) {
-                return index;
-            }
-        }
-    }
-    return null;
-}
-
-Array.prototype.replace = function (item) {
-    const index = getItemIndex(this, item);
-    if (index !== null) {
+Array.prototype.save = function (item) {
+    const index = this.findIndex(i => i.id === item.id);
+    if (index !== -1) {
         this.splice(index, 1, item);
+    } else {
+        this.push(item);
     }
 };
 
 Array.prototype.remove = function (item) {
-    const index = getItemIndex(this, item);
-    if (index !== null) {
+    const index = this.findIndex(i => i.id === item.id);
+    if (index !== -1) {
         this.splice(index, 1);
     }
 };
 
-Array.prototype.getId = function () {
+Array.prototype.newId = function () {
     if (this.length > 0) {
         return this[this.length - 1].id + 1;
     } else {
@@ -49,11 +38,11 @@ Array.prototype.last = function () {
     return null;
 };
 
-Array.prototype.getById = function (id) {
+Array.prototype.findId = function (id) {
     if (this.length > 0 && id) {
-        const itemsWithSameId = this.filter(item => item.id === id);
-        if (itemsWithSameId.length > 0) {
-            return itemsWithSameId[0];
+        const itemFounded = this.find(item => item.id === id);
+        if (itemFounded) {
+            return itemFounded;
         }
     }
     return null;
