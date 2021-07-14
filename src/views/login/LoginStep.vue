@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card flat>
     <v-container>
       <v-row class="text-center">
         <v-col cols="12">
@@ -13,12 +13,15 @@
           </v-form>
         </v-col>
         <v-col cols="12">
-          <v-btn color="primary" block @click="ok">
+          <v-btn block text @click="ok">
+            <v-icon class="mr-3" color="primary">
+              {{ iconOk }}
+            </v-icon>
             {{ textOk }}
           </v-btn>
         </v-col>
         <v-col cols="12">
-          <v-btn class="primary--text" small plain text @click="change">
+          <v-btn x-small text @click="change">
             {{ textChange }}
           </v-btn>
         </v-col>
@@ -30,6 +33,7 @@
 <script>
 export default {
   props: {
+    iconOk: String,
     textOk: String,
     textChange: String
   },

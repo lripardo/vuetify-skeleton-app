@@ -3,10 +3,11 @@
     <v-container class="pa-0 fill-height" fluid>
       <v-row align="center" justify="center" no-gutters>
         <v-col cols="12" sm="10" md="7" lg="4" xl="3">
-          <v-stepper flat v-model="stepper">
+          <v-stepper v-model="stepper">
             <v-stepper-items>
               <v-stepper-content step="1">
                 <login-step ref="authenticateStep" @ok="doAuthenticate" @change="changeStep(steps.register)"
+                            icon-ok="mdi-account"
                             text-ok="Entrar"
                             text-change="Criar conta">
                   <div slot="fields">
@@ -49,6 +50,7 @@
 
               <v-stepper-content step="2">
                 <login-step ref="registerStep" @ok="doRegister" @change="changeStep(steps.authenticate)"
+                            icon-ok="mdi-account-plus"
                             text-ok="Criar conta"
                             text-change="Fazer login">
                   <div slot="fields">
