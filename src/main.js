@@ -24,11 +24,9 @@ Array.prototype.remove = function (item) {
 };
 
 Array.prototype.newId = function () {
-    if (this.length > 0) {
-        return this[this.length - 1].id + 1;
-    } else {
-        return 1;
-    }
+    return this.reduce(function (a, b) {
+        return Math.max(a, b.id);
+    }, 0) + 1;
 };
 
 Array.prototype.last = function () {
