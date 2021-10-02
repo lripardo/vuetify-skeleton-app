@@ -88,6 +88,15 @@ export default {
       const response = await fetchInitialData();
       if (response) {
         if (response.status === 200) {
+          if (process.env.VUE_APP_VERIFY_VERSION === 'true') {
+            if (response.data.version !== process.env.VUE_APP_GIT_HASH) {
+              this.showAlert({
+                message: "Uma nova versão está disponível. Recarregue a página para obter a nova versão.",
+                timeout: -1
+              });
+              this.error = true;
+            }
+          }
           this.setConfig(response.data);
           if (this.$route.name === 'login') {
             goToHome();
