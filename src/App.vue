@@ -91,7 +91,7 @@ export default {
           if (process.env.VUE_APP_VERIFY_VERSION === 'true') {
             if (response.data.version !== process.env.VUE_APP_GIT_HASH) {
               this.showAlert({
-                message: "Uma nova versão está disponível. Recarregue a página para obter a nova versão.",
+                message: `Uma nova versão está disponível. Recarregue a página para obter a nova versão. Sua versão: ${process.env.VUE_APP_GIT_HASH}. Nova versão: ${response.data.version}.`,
                 timeout: -1
               });
               this.error = true;
