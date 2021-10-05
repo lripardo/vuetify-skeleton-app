@@ -39,7 +39,7 @@
 import {mapState, mapActions} from 'vuex';
 import Loader from '@/components/Loader';
 import {fetchInitialData} from '@/lib/backend/http';
-import {goToHome, goToLogin} from '@/lib/redirects';
+import {goToHome, goToLogin, goToChangePassword} from '@/lib/redirects';
 
 export default {
   name: 'App',
@@ -84,42 +84,56 @@ export default {
     ...mapActions('config', ['setConfig']),
     ...mapActions('alert', ['closeAlert', 'showAlert', 'setShowAlert']),
     ...mapActions('confirmation', ['closeConfirmation', 'setShowConfirmation', 'executeYesConfirmation']),
+    throwError(errorAction) {
+      this.error = true;
+      this.finish(errorAction);
+    },
+    finish(finishAction) {
+      if (finishAction) {
+        finishAction();
+      }
+      this.loading = false;
+    },
     async startApp() {
       const response = await fetchInitialData();
-      if (response) {
-        if (response.status === 200) {
-          if (process.env.VUE_APP_VERIFY_VERSION === 'true') {
-            if (response.data.version !== process.env.VUE_APP_GIT_HASH) {
+      if (!response) return this.throwError();
+      if (response.status === 200) {
+        if (process.env.VUE_APP_VERIFY_VERSION === 'true') {
+          if (response.data.version !== process.env.VUE_APP_GIT_HASH) {
+            return this.throwError(() => {
               this.showAlert({
                 message: `Uma nova versão está disponível. Recarregue a página para obter a nova versão. Sua versão: ${process.env.VUE_APP_GIT_HASH}. Nova versão: ${response.data.version}.`,
                 timeout: -1
               });
-              this.error = true;
-            }
+            })
           }
-          this.setConfig(response.data);
-          if (this.$route.name === 'login') {
-            goToHome();
-          }
-          if (this.$route.meta.roles.length && !this.$route.meta.roles.includes(response.data.user.role)) {
+        }
+        this.setConfig(response.data);
+        if (response.data.user.has_to_change_password) {
+          return this.finish(goToChangePassword);
+        }
+        if (this.$route.name === 'login') {
+          return this.finish(goToHome);
+        }
+        if (this.$route.meta.roles.length && !this.$route.meta.roles.includes(response.data.user.role)) {
+          return this.finish(() => {
             this.showAlert({
               message: 'Área não permitida para o seu usuário'
             });
             goToHome();
-          }
-        } else if (response.status === 500) {
+          });
+        }
+      } else if (response.status === 500) {
+        return this.throwError(() => {
           this.showAlert({
             message: response.message,
             timeout: -1
           });
-          this.error = true;
-        } else {
-          goToLogin();
-        }
-        this.loading = false;
+        })
       } else {
-        this.error = true;
+        return this.finish(goToLogin);
       }
+      this.finish();
     }
   },
   mounted() {

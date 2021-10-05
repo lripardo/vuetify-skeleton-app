@@ -11,3 +11,7 @@ export const postLogout = () => {
 export const postRegister = (user) => {
     return request(client().post, '/auth/register', user);
 };
+
+export const putChangePassword = (credentials) => {
+    return request(client().put, '/auth/change-password', credentials, false);
+}

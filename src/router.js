@@ -4,6 +4,7 @@ import Login from '@/views/Login';
 import Home from '@/views/Home';
 import Logout from '@/views/Logout';
 import Account from '@/views/Account';
+import ChangePassword from '@/views/login/ChangePassword';
 
 Vue.use(Router);
 
@@ -39,6 +40,14 @@ export default new Router({
             path: '/account',
             name: 'account',
             component: Account,
+            meta: {
+                roles: []
+            }
+        },
+        {
+            path: '/change-password',
+            name: 'change-password',
+            component: ChangePassword,
             meta: {
                 roles: []
             }

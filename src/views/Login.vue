@@ -140,14 +140,12 @@ import {
   MIN_PASSWORD_LENGTH
 } from '@/lib/validation/constants';
 import LoginStep from '@/views/login/LoginStep';
+import {INVALID_PASSWORD, NOT_EQUAL_PASSWORDS, rulePassword, TOO_MANY_ATTEMPTS} from '@/lib/validation/rules';
 
 const FIELD_REQUIRED = 'Este campo é obrigatório';
 const INVALID_EMAIL = 'E-mail inválido';
-const INVALID_PASSWORD = 'Senha inválida';
-const NOT_EQUAL_PASSWORDS = 'As senhas não conferem';
 const NO_ACCOUNT_ASSOCIATED = 'Não há conta associada à este email';
 const ALREADY_ACCOUNT_ASSOCIATED = 'Já existe uma conta associada à este email';
-const TOO_MANY_ATTEMPTS = 'Muitas tentativas não autorizadas. Tente novamente mais tarde.';
 const ACCOUNT_CREATED_DO_LOGIN = 'Conta criada com sucesso! Entre no sistema para continuar.';
 const customInvalidLengthPassword = len => `A nova senha deve ter no mínimo ${len} caracteres`;
 
@@ -196,7 +194,7 @@ export default {
       maxEmailLength: MAX_EMAIL_LENGTH,
       maxPasswordLength: MAX_PASSWORD_LENGTH,
       maxNameUserLength: MAX_NAME_USER_LENGTH,
-      rulePassword: p => typeof p === 'string' && p.length >= MIN_PASSWORD_LENGTH || INVALID_PASSWORD,
+      rulePassword: rulePassword,
       rulesEmail: [e => typeof e === 'string' && validEmail(e) || INVALID_EMAIL],
       rulesName: [n => typeof n === 'string' && n.length > 0 && n.length <= MAX_NAME_USER_LENGTH || FIELD_REQUIRED]
     }

@@ -32,3 +32,7 @@ export const goToAccount = () => {
     goTo('account');
 };
 
+export const goToChangePassword = () => {
+    goTo('change-password');
+}
+

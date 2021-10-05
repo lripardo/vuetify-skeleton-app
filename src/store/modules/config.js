@@ -7,34 +7,17 @@ const state = {
 const getters = {};
 
 const mutations = {
-    SET_USER(state, {id, name, role, email}) {
-        if (!state.user) {
-            state.user = {
-                id: id,
-                name: name,
-                role: role,
-                email: email
-            }
-        } else {
-            if (id !== undefined) {
-                state.user.id = id;
-            }
-            if (name !== undefined) {
-                state.user.name = name;
-            }
-            if (role !== undefined) {
-                state.user.role = role;
-            }
-            if (email !== undefined) {
-                state.user.email = email;
-            }
-        }
+    SET_USER(state, user) {
+        state.user = user;
     },
     SET_EXPIRES(state, expires) {
         state.expires = expires;
     },
     SET_CONFIG(state, config) {
         state.config = config;
+    },
+    SET_HAS_TO_CHANGE_PASSWORD(state, hasToChangePassword) {
+        state.user.has_to_change_password = hasToChangePassword;
     }
 };
 
@@ -44,6 +27,9 @@ const actions = {
         commit('SET_EXPIRES', config.expires);
         commit('SET_CONFIG', config.config);
     },
+    setHasToChangePassword({commit}, hasToChangePassword) {
+        commit('SET_HAS_TO_CHANGE_PASSWORD', hasToChangePassword);
+    }
 };
 
 export default {

@@ -27,7 +27,7 @@
                   <v-col cols="12">
                     <v-divider/>
                   </v-col>
-                  <v-col class="item" cols="12">
+                  <v-col class="item" cols="12" @click="goToChangePassword">
                     <v-container>
                       <v-row>
                         <v-col cols="3">
@@ -55,7 +55,7 @@
 <script>
 import AppNavBar from '@/components/AppNavBar';
 import {mapState} from 'vuex';
-import {goToHome} from '@/lib/redirects';
+import {goToChangePassword, goToHome} from '@/lib/redirects';
 
 export default {
   name: 'Account',
@@ -63,6 +63,7 @@ export default {
   data() {
     return {
       goToHome: goToHome,
+      goToChangePassword: goToChangePassword
     }
   },
   computed: {
