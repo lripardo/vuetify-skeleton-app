@@ -91,7 +91,7 @@ import AppNavBar from '@/components/AppNavBar';
 import {MAX_PASSWORD_LENGTH} from '@/lib/validation/constants';
 import {INVALID_PASSWORD, NOT_EQUAL_PASSWORDS, rulePassword, TOO_MANY_ATTEMPTS} from '@/lib/validation/rules';
 import {mapActions, mapState} from 'vuex';
-import {goToHome} from '@/lib/redirects';
+import {goToHome, goToLogin} from '@/lib/redirects';
 import {putChangePassword} from '@/lib/backend/auth';
 
 const NEW_PASSWORD_DIFF = 'A nova senha deve ser diferente da antiga senha';
@@ -172,7 +172,7 @@ export default {
       if (response.status === 200) {
         return this.finish(() => {
           this.setHasToChangePassword(true);
-          goToHome();
+          goToLogin();
         })
       } else if (response.status === 401) {
         return this.finish(() => {
