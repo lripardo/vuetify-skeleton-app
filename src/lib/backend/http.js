@@ -14,9 +14,9 @@ export const request = async (method, url, data = null, redirectLogin = true) =>
     await method(url, data)
         .then((data) => {
             if (process.env.VUE_APP_VERIFY_VERSION === 'true') {
-                if (data.data.data.app_version !== process.env.VUE_APP_GIT_HASH) {
+                if (data.data.app_version !== process.env.VUE_APP_GIT_HASH) {
                     return store.dispatch('alert/showAlert', {
-                        message: `Uma nova versão está disponível. Recarregue a página para obter a nova versão. Sua versão: ${process.env.VUE_APP_GIT_HASH}. Nova versão: ${response.data.version}.`,
+                        message: `Uma nova versão está disponível. Recarregue a página para obter a nova versão. Sua versão: ${process.env.VUE_APP_GIT_HASH}. Nova versão: ${data.data.app_version}.`,
                         timeout: -1
                     });
                 }
