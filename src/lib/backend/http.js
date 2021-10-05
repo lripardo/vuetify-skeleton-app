@@ -12,7 +12,17 @@ export const client = () => {
 export const request = async (method, url, data = null, redirectLogin = true) => {
     let response = null;
     await method(url, data)
-        .then((data) => (response = data.data))
+        .then((data) => {
+            if (process.env.VUE_APP_VERIFY_VERSION === 'true') {
+                if (data.data.data.app_version !== process.env.VUE_APP_GIT_HASH) {
+                    return store.dispatch('alert/showAlert', {
+                        message: `Uma nova versão está disponível. Recarregue a página para obter a nova versão. Sua versão: ${process.env.VUE_APP_GIT_HASH}. Nova versão: ${response.data.version}.`,
+                        timeout: -1
+                    });
+                }
+            }
+            response = data.data;
+        })
         .catch(() => (store.dispatch('alert/showAlert', {
             message: 'Ocorreu um erro. Tente novamente mais tarde.',
             timeout: -1
