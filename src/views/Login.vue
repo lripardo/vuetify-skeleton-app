@@ -132,7 +132,7 @@
 import {postLogin, postRegister} from '@/lib/backend/auth';
 import {mapActions} from 'vuex';
 import {validEmail} from '@/lib/validation/validation';
-import {goToHome} from '@/lib/redirects';
+import {goToChangePassword, goToHome} from '@/lib/redirects';
 import {
   MAX_EMAIL_LENGTH,
   MAX_NAME_USER_LENGTH,
@@ -222,7 +222,11 @@ export default {
         if (response) {
           if (response.status === 200) {
             this.setConfig(response.data.config);
-            goToHome();
+            if (response.data.config.user.has_to_change_password) {
+              goToChangePassword();
+            } else {
+              goToHome();
+            }
           } else if (response.status === 401) {
             this.authenticate.password.errors = [INVALID_PASSWORD];
             this.$refs.authenticatePassword.focus();
