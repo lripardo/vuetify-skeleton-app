@@ -31,7 +31,7 @@ export const request = async (method, url, data = null, redirectLogin = true) =>
         if (response) {
             if (response.status === 401) {
                 await store.dispatch('alert/showAlert', {
-                    message: 'Sessão expirada. Faça o login para continuar.'
+                    message: 'Sessão expirada. Faça o login novamente para continuar.'
                 });
                 response = null;
                 goToLogin();

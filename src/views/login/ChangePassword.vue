@@ -75,7 +75,7 @@
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer/>
-                  <v-btn color="primary" @click="doChangePassword">Alterar</v-btn>
+                  <v-btn :color="isDarkMode ? '' : 'primary'" @click="doChangePassword">Alterar</v-btn>
                 </v-card-actions>
               </v-card>
             </v-form>
@@ -196,6 +196,9 @@ export default {
     }),
     backRoute() {
       return this.user.has_to_change_password ? null : goToHome
+    },
+    isDarkMode() {
+      return this.$vuetify.theme.dark;
     }
   }
 }
