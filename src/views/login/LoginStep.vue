@@ -13,15 +13,15 @@
           </v-form>
         </v-col>
         <v-col cols="12">
-          <v-btn block text @click="ok">
-            <v-icon class="mr-3" color="primary">
+          <v-btn :color="isDarkMode ? '' : 'primary'" block @click="ok">
+            <v-icon v-if="iconOk" class="mr-3">
               {{ iconOk }}
             </v-icon>
             {{ textOk }}
           </v-btn>
         </v-col>
         <v-col cols="12">
-          <v-btn x-small text @click="change">
+          <v-btn :color="isDarkMode ? '' : 'primary'" x-small text @click="change">
             {{ textChange }}
           </v-btn>
         </v-col>
@@ -33,7 +33,11 @@
 <script>
 export default {
   props: {
-    iconOk: String,
+    iconOk: {
+      type: String,
+      required: false,
+      default: ''
+    },
     textOk: String,
     textChange: String
   },
@@ -50,6 +54,11 @@ export default {
     },
     resetValidation() {
       return this.$refs.form.resetValidation();
+    }
+  },
+  computed: {
+    isDarkMode() {
+      return this.$vuetify.theme.dark;
     }
   }
 }

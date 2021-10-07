@@ -5,12 +5,14 @@ import pt from 'vuetify/es5/locale/pt';
 
 Vue.use(Vuetify);
 
+const dark = localStorage.getItem("dark");
+
 export default new Vuetify({
     icons: {
         iconfont: 'mdi'
     },
     theme: {
-        dark: false,
+        dark: dark === 'true',
         themes: {
             light: {
                 primary: '#40b7ab',

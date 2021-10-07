@@ -1,13 +1,12 @@
 <template>
-  <v-card class="fill-height" :disabled="loading" :loading="loading" outlined>
+  <v-card class="fill-height pl-3 pr-3" :disabled="loading" :loading="loading" flat>
     <v-container class="pa-0 fill-height" fluid>
       <v-row align="center" justify="center" no-gutters>
-        <v-col cols="12" sm="10" md="7" lg="4" xl="3">
-          <v-stepper v-model="stepper">
+        <v-col cols="12" sm="10" md="7" lg="3">
+          <v-stepper v-model="stepper" flat>
             <v-stepper-items>
               <v-stepper-content step="1">
                 <login-step ref="authenticateStep" @ok="doAuthenticate" @change="changeStep(steps.register)"
-                            icon-ok="mdi-account"
                             text-ok="Entrar"
                             text-change="Criar conta">
                   <div slot="fields">
@@ -20,7 +19,6 @@
                                   outlined
                                   validate-on-blur
                                   :maxLength="maxEmailLength"
-                                  :counter="maxEmailLength"
                                   @keyup.enter="$refs.authenticatePassword.focus()"
                                   :rules="rulesEmail"
                                   @input="authenticate.email.errors = []"
@@ -37,7 +35,6 @@
                                   outlined
                                   validate-on-blur
                                   :maxLength="maxPasswordLength"
-                                  :counter="maxPasswordLength"
                                   @keyup.enter="doAuthenticate"
                                   :rules="[rulePassword]"
                                   @input="authenticate.password.errors = []"
@@ -50,7 +47,6 @@
 
               <v-stepper-content step="2">
                 <login-step ref="registerStep" @ok="doRegister" @change="changeStep(steps.authenticate)"
-                            icon-ok="mdi-account-plus"
                             text-ok="Criar conta"
                             text-change="Fazer login">
                   <div slot="fields">
@@ -62,7 +58,6 @@
                                   label="E-mail"
                                   outlined
                                   validate-on-blur
-                                  :counter="maxEmailLength"
                                   :maxLength="maxEmailLength"
                                   :rules="rulesEmail"
                                   @keyup.enter="$refs.registerName.focus()"
@@ -79,7 +74,6 @@
                                   validate-on-blur
                                   @keyup.enter="$refs.registerPassword.focus()"
                                   :maxLength="maxNameUserLength"
-                                  :counter="maxNameUserLength"
                                   :rules="rulesName"
                                   @input="register.name.errors = []"
                                   @change="register.name.value = register.name.value.toUpperCase()"
@@ -94,7 +88,6 @@
                                   outlined
                                   validate-on-blur
                                   :maxLength="maxPasswordLength"
-                                  :counter="maxPasswordLength"
                                   @keyup.enter="$refs.registerPasswordConfirm.focus()"
                                   :rules="[rulePassword, ruleNewPassword]"
                                   @click:append="register.password.visible = !register.password.visible"
@@ -102,7 +95,7 @@
                                   :error-messages="register.password.errors"
                     />
                     <v-text-field v-model="register.passwordConfirm.value"
-                                  autocomplete="new-password"
+                                  autocomplete="password-confirm"
                                   ref="registerPasswordConfirm"
                                   :append-icon="register.passwordConfirm.visible ? 'mdi-eye' : 'mdi-eye-off'"
                                   :type="register.passwordConfirm.visible ? 'text' : 'password'"
@@ -110,7 +103,6 @@
                                   outlined
                                   validate-on-blur
                                   :maxLength="maxPasswordLength"
-                                  :counter="maxPasswordLength"
                                   @keyup.enter="doRegister"
                                   :rules="[rulePassword, ruleConfirmPassword]"
                                   @click:append="register.passwordConfirm.visible = !register.passwordConfirm.visible"
