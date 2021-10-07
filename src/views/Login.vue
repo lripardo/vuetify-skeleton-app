@@ -89,7 +89,7 @@
                                   validate-on-blur
                                   :maxLength="maxPasswordLength"
                                   @keyup.enter="$refs.registerPasswordConfirm.focus()"
-                                  :rules="[rulePassword, ruleNewPassword]"
+                                  :rules="[rulePassword]"
                                   @click:append="register.password.visible = !register.password.visible"
                                   @input="register.password.errors = []"
                                   :error-messages="register.password.errors"
@@ -128,8 +128,7 @@ import {goToChangePassword, goToHome} from '@/lib/redirects';
 import {
   MAX_EMAIL_LENGTH,
   MAX_NAME_USER_LENGTH,
-  MAX_PASSWORD_LENGTH,
-  MIN_PASSWORD_LENGTH
+  MAX_PASSWORD_LENGTH
 } from '@/lib/validation/constants';
 import LoginStep from '@/views/login/LoginStep';
 import {INVALID_PASSWORD, NOT_EQUAL_PASSWORDS, rulePassword, TOO_MANY_ATTEMPTS} from '@/lib/validation/rules';
@@ -138,8 +137,7 @@ const FIELD_REQUIRED = 'Este campo é obrigatório';
 const INVALID_EMAIL = 'E-mail inválido';
 const NO_ACCOUNT_ASSOCIATED = 'Não há conta associada à este email';
 const ALREADY_ACCOUNT_ASSOCIATED = 'Já existe uma conta associada à este email';
-const ACCOUNT_CREATED_DO_LOGIN = 'Conta criada com sucesso! Entre no sistema para continuar.';
-const customInvalidLengthPassword = len => `A nova senha deve ter no mínimo ${len} caracteres`;
+const ACCOUNT_CREATED_DO_LOGIN = 'Conta criada. Faça o login para continuar.';
 
 export default {
   name: 'Login',
@@ -194,83 +192,81 @@ export default {
   mounted() {
     this.delayedAuthenticateEmailFocus();
   },
+  computed: {
+    isDarkMode() {
+      return this.$vuetify.theme.dark;
+    }
+  },
   methods: {
     ...mapActions('alert', ['showAlert']),
     ...mapActions('config', ['setConfig']),
-    ruleNewPassword(p) {
-      return typeof this.rulePassword(p) !== 'string' || customInvalidLengthPassword(MIN_PASSWORD_LENGTH);
-    },
     ruleConfirmPassword(v) {
       return typeof v === 'string' && this.register.password.value === v || NOT_EQUAL_PASSWORDS;
     },
     async doAuthenticate() {
-      if (this.$refs.authenticateStep.validate()) {
-        this.loading = true;
-        const response = await postLogin({
-          email: this.authenticate.email.value,
-          password: this.authenticate.password.value,
-          cookie: true
-        });
-        if (response) {
-          if (response.status === 200) {
-            this.setConfig(response.data.config);
-            if (response.data.config.user.has_to_change_password) {
-              goToChangePassword();
-            } else {
-              goToHome();
-            }
-          } else if (response.status === 401) {
-            this.authenticate.password.errors = [INVALID_PASSWORD];
-            this.$refs.authenticatePassword.focus();
-          } else if (response.status === 406) {
-            this.authenticate.email.errors = [NO_ACCOUNT_ASSOCIATED];
-            this.$refs.authenticateEmail.focus();
-          } else if (response.status === 429) {
-            this.showAlert({
-              message: TOO_MANY_ATTEMPTS
-            });
-          } else {
-            this.showAlert({
-              message: response.message,
-              timeout: -1
-            })
-          }
-          this.authenticate.password.value = '';
+      if (!this.$refs.authenticateStep.validate()) return;
+      this.loading = true;
+      const response = await postLogin({
+        email: this.authenticate.email.value,
+        password: this.authenticate.password.value,
+        cookie: true
+      });
+      this.loading = false;
+      if (!response) return;
+      if (response.status === 200) {
+        this.setConfig(response.data.config);
+        if (response.data.config.user.has_to_change_password) {
+          return goToChangePassword();
         }
-        this.loading = false;
+        goToHome();
+      } else if (response.status === 401) {
+        this.authenticate.password.errors = [INVALID_PASSWORD];
+        this.$refs.authenticatePassword.focus();
+      } else if (response.status === 406) {
+        this.authenticate.email.errors = [NO_ACCOUNT_ASSOCIATED];
+        this.$refs.authenticateEmail.focus();
+      } else if (response.status === 429) {
+        this.showAlert({
+          message: TOO_MANY_ATTEMPTS
+        });
+      } else {
+        this.showAlert({
+          message: response.message,
+          timeout: -1
+        })
       }
+      this.authenticate.password.value = '';
     },
     changeStep(step) {
       this.clearFields();
       this.stepper = step;
     },
     async doRegister() {
-      if (this.$refs.registerStep.validate()) {
-        this.loading = true;
-        const response = await postRegister({
-          email: this.register.email.value,
-          password: this.register.password.value,
-          name: this.register.name.value
+      this.$refs.registerPasswordConfirm.blur();
+      if (!this.$refs.registerStep.validate()) return;
+      this.loading = true;
+      const response = await postRegister({
+        email: this.register.email.value,
+        password: this.register.password.value,
+        name: this.register.name.value
+      });
+      this.loading = false;
+      if (!response) return;
+      if (response.status === 200) {
+        this.clearFields();
+        this.changeStep(this.steps.authenticate);
+        this.showAlert({
+          message: ACCOUNT_CREATED_DO_LOGIN,
+          color: this.isDarkMode ? '' : 'primary'
         });
-        if (response) {
-          if (response.status === 200) {
-            this.clearFields();
-            this.changeStep(this.steps.authenticate);
-            this.showAlert({
-              message: ACCOUNT_CREATED_DO_LOGIN,
-              color: 'success'
-            });
-          } else if (response.status === 400) {
-            this.register.email.errors = [INVALID_EMAIL];
-          } else if (response.status === 409) {
-            this.register.email.errors = [ALREADY_ACCOUNT_ASSOCIATED];
-          } else {
-            this.showAlert({
-              message: response.message
-            });
-          }
-        }
-        this.loading = false;
+      } else if (response.status === 400) {
+        this.register.email.errors = [INVALID_EMAIL];
+      } else if (response.status === 409) {
+        this.register.email.errors = [ALREADY_ACCOUNT_ASSOCIATED];
+      } else {
+        this.showAlert({
+          message: response.message
+        });
       }
     },
     clearFields() {

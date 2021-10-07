@@ -36,3 +36,15 @@ export const goToChangePassword = () => {
     goTo('change-password');
 }
 
+export const goToError = () => {
+    goTo('error');
+}
+
+export const goToForbidden = () => {
+    goTo('forbidden');
+}
+
+export const goToUpdate = () => {
+    goTo('update');
+}
+

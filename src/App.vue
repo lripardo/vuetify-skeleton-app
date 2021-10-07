@@ -27,33 +27,23 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <div class="fill-height" v-if="!error">
-      <loader :loading="loading" size="64">
-        <router-view v-if="render" slot="content"/>
-      </loader>
-    </div>
+    <router-view v-if="render"/>
   </v-app>
 </template>
 
 <script>
 import {mapState, mapActions} from 'vuex';
-import Loader from '@/components/Loader';
 import {fetchInitialData} from '@/lib/backend/http';
-import {goToHome, goToLogin, goToChangePassword} from '@/lib/redirects';
+import {goToHome, goToLogin, goToChangePassword, goToError, goToForbidden} from '@/lib/redirects';
 
 export default {
   name: 'App',
-  components: {Loader},
   data() {
     return {
-      loading: true,
-      error: false
+      render: false
     }
   },
   computed: {
-    render() {
-      return !this.loading && !this.error;
-    },
     alertShow: {
       get() {
         return this.alertShowState;
@@ -84,19 +74,16 @@ export default {
     ...mapActions('config', ['setConfig']),
     ...mapActions('alert', ['closeAlert', 'showAlert', 'setShowAlert']),
     ...mapActions('confirmation', ['closeConfirmation', 'setShowConfirmation', 'executeYesConfirmation']),
-    throwError(errorAction) {
-      this.error = true;
-      this.finish(errorAction);
-    },
     finish(finishAction) {
       if (finishAction) {
         finishAction();
       }
-      this.loading = false;
+      this.render = true;
     },
     async startApp() {
+      console.log(this.$route)
       const response = await fetchInitialData();
-      if (!response) return this.throwError();
+      if (!response) return this.finish(goToError);
       if (response.status === 200) {
         this.setConfig(response.data);
         if (response.data.user.has_to_change_password) {
@@ -106,22 +93,14 @@ export default {
           return this.finish(goToHome);
         }
         if (this.$route.meta.roles.length && !this.$route.meta.roles.includes(response.data.user.role)) {
-          return this.finish(() => {
-            this.showAlert({
-              message: 'Área não permitida para o seu usuário'
-            });
-            goToHome();
-          });
+          return this.finish(goToForbidden);
         }
-      } else if (response.status === 500) {
-        return this.throwError(() => {
-          this.showAlert({
-            message: response.message,
-            timeout: -1
-          });
-        })
+      } else if (response.status === 401) {
+        if (!this.$route.meta.all) {
+          return this.finish(goToLogin);
+        }
       } else {
-        return this.finish(goToLogin);
+        return this.finish(goToError);
       }
       this.finish();
     }
