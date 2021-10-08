@@ -6,7 +6,10 @@
       <v-container fluid>
         <v-row no-gutters>
           <v-col cols="12">
-            <div class="pt-5 pb-3 headline text-center">{{ `OLÁ, ${user.name}` }}</div>
+            <div class="pt-5 pb-3 headline text-center">
+              {{ `OLÁ, ${user.name}` }}
+              <div class="caption">{{ `versão ${git}` }}</div>
+            </div>
           </v-col>
         </v-row>
         <v-row>
