@@ -6,7 +6,7 @@
       <v-container fluid>
         <v-row justify="center">
           <v-col cols="12" md="8">
-            <v-card>
+            <v-card flat outlined>
               <v-container fluid>
                 <v-row no-gutters>
                   <v-col class="item" cols="12">

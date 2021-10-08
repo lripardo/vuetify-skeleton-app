@@ -44,13 +44,13 @@
         <slot name="append-title-icon"></slot>
       </v-toolbar-title>
       <div v-if="actionMenu" class="flex-grow-1"/>
-      <v-menu v-if="actionMenu" transition="slide-x-transition" :min-width="150" bottom left>
+      <v-menu v-if="actionMenu" class="elevation-0" transition="slide-x-transition" :min-width="150" rounded bottom left>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
-        <v-list>
+        <v-list outlined flat>
           <v-list-item v-for="(item, i) in actionMenuItems" :key="i" @click="item.click">
             <v-list-item-title>{{ item.title }}</v-list-item-title>
           </v-list-item>
