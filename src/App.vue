@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-show="show">
     <v-overlay :value="overlay" absolute z-index="6">
       <v-progress-circular
           indeterminate
@@ -55,7 +55,8 @@ export default {
   components: {Forbidden, Update, Error},
   data() {
     return {
-      render: false
+      render: false,
+      show: false
     }
   },
   computed: {
@@ -101,6 +102,13 @@ export default {
         finishAction();
       }
       this.render = true;
+      this.$nextTick(() => {
+        const animation = document.getElementById('logo-container');
+        if (animation) {
+          animation.remove();
+        }
+        this.show = true;
+      });
     },
     async startApp() {
       const response = await fetchInitialData();
