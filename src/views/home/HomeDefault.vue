@@ -65,7 +65,10 @@ export default {
   computed: {
     ...mapState({
       user: state => state.config.user
-    })
+    }),
+    git() {
+      return process.env.VUE_APP_GIT_HASH || 'Dev';
+    }
   }
 }
 </script>
