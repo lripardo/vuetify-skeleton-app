@@ -13,7 +13,7 @@
           </v-form>
         </v-col>
         <v-col cols="12">
-          <v-btn :color="isDarkMode ? '' : 'primary'" block @click="ok">
+          <v-btn :color="isDarkMode ? '' : 'primary'" rounded block @click="ok">
             <v-icon v-if="iconOk" class="mr-3">
               {{ iconOk }}
             </v-icon>

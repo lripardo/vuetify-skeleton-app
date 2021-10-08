@@ -5,9 +5,6 @@ import Home from '@/views/Home';
 import Logout from '@/views/Logout';
 import Account from '@/views/Account';
 import ChangePassword from '@/views/login/ChangePassword';
-import Error from '@/views/handlers/Error';
-import Forbidden from '@/views/handlers/Forbidden';
-import Update from '@/views/handlers/Update';
 
 Vue.use(Router);
 
@@ -20,8 +17,7 @@ export default new Router({
             name: 'login',
             component: Login,
             meta: {
-                roles: [],
-                all: true
+                roles: []
             }
         },
         {
@@ -57,38 +53,10 @@ export default new Router({
             }
         },
         {
-            path: '/error',
-            name: 'error',
-            component: Error,
-            meta: {
-                roles: [],
-                all: true
-            }
-        },
-        {
-            path: '/forbidden',
-            name: 'forbidden',
-            component: Forbidden,
-            meta: {
-                roles: [],
-                all: true
-            }
-        },
-        {
-            path: '/update',
-            name: 'update',
-            component: Update,
-            meta: {
-                roles: [],
-                all: true
-            }
-        },
-        {
             path: '*',
             redirect: '/',
             meta: {
-                roles: [],
-                all: true
+                roles: []
             }
         }
     ]

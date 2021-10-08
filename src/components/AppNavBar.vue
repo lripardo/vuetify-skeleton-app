@@ -35,7 +35,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :color="$vuetify.theme.dark ? '' : 'primary'" app dark>
+    <v-app-bar :color="$vuetify.theme.dark ? '' : 'primary'" app dark flat>
       <v-app-bar-nav-icon v-if="backRoute" @click="backClick">
         <v-icon>mdi-arrow-left</v-icon>
       </v-app-bar-nav-icon>

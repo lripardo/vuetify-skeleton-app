@@ -13,7 +13,7 @@
                     <v-container>
                       <v-row>
                         <v-col cols="3">
-                          <span class="caption grey--text">INFORMAÇÕES ADICIONAIS</span>
+                          <span class="caption grey--text">NOME</span>
                         </v-col>
                         <v-col cols="6">
                           <span class="heading">{{ user.name }}</span>

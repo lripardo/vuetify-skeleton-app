@@ -1,16 +1,14 @@
 <template>
-  <loader :loading="true"/>
+  <div/>
 </template>
 
 <script>
 import {mapActions} from 'vuex';
-import Loader from '@/components/Loader';
 import {postLogout} from '@/lib/backend/auth';
 import {goToHome, goToLogin} from '@/lib/redirects';
 
 export default {
   name: 'Logout',
-  components: {Loader},
   mounted() {
     this.logout();
   },
@@ -18,16 +16,13 @@ export default {
     ...mapActions('alert', ['showAlert']),
     async logout() {
       const response = await postLogout();
-      if (response) {
-        if (response.status === 200) {
-          return goToLogin();
-        } else {
-          this.showAlert({
-            message: response.message
-          });
-        }
+      if (!response) return goToHome();
+      if (response.status === 200) {
+        goToLogin();
+      } else {
+        this.showAlert({message: response.message});
+        goToHome();
       }
-      goToHome();
     }
   }
 }

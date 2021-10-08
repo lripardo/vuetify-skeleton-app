@@ -1,5 +1,5 @@
 <template>
-  <v-card class="fill-height pl-3 pr-3" :disabled="loading" :loading="loading" flat>
+  <v-card class="fill-height pl-3 pr-3" flat>
     <v-container class="pa-0 fill-height" fluid>
       <v-row align="center" justify="center" no-gutters>
         <v-col cols="12" sm="10" md="7" lg="3">
@@ -104,7 +104,7 @@
                                   validate-on-blur
                                   :maxLength="maxPasswordLength"
                                   @keyup.enter="doRegister"
-                                  :rules="[rulePassword, ruleConfirmPassword]"
+                                  :rules="[rulePassword, ruleConfirmPassword(register.password)]"
                                   @click:append="register.passwordConfirm.visible = !register.passwordConfirm.visible"
                                   @input="register.passwordConfirm.errors = []"
                                   :error-messages="register.passwordConfirm.errors"
@@ -131,7 +131,12 @@ import {
   MAX_PASSWORD_LENGTH
 } from '@/lib/validation/constants';
 import LoginStep from '@/views/login/LoginStep';
-import {INVALID_PASSWORD, NOT_EQUAL_PASSWORDS, rulePassword, TOO_MANY_ATTEMPTS} from '@/lib/validation/rules';
+import {
+  INVALID_PASSWORD,
+  ruleConfirmPassword,
+  rulePassword,
+  TOO_MANY_ATTEMPTS
+} from '@/lib/validation/rules';
 
 const FIELD_REQUIRED = 'Este campo é obrigatório';
 const INVALID_EMAIL = 'E-mail inválido';
@@ -180,11 +185,11 @@ export default {
         }
       },
       stepper: 1,
-      loading: false,
       maxEmailLength: MAX_EMAIL_LENGTH,
       maxPasswordLength: MAX_PASSWORD_LENGTH,
       maxNameUserLength: MAX_NAME_USER_LENGTH,
       rulePassword: rulePassword,
+      ruleConfirmPassword: ruleConfirmPassword,
       rulesEmail: [e => typeof e === 'string' && validEmail(e) || INVALID_EMAIL],
       rulesName: [n => typeof n === 'string' && n.length > 0 && n.length <= MAX_NAME_USER_LENGTH || FIELD_REQUIRED]
     }
@@ -200,18 +205,13 @@ export default {
   methods: {
     ...mapActions('alert', ['showAlert']),
     ...mapActions('config', ['setConfig']),
-    ruleConfirmPassword(v) {
-      return typeof v === 'string' && this.register.password.value === v || NOT_EQUAL_PASSWORDS;
-    },
     async doAuthenticate() {
       if (!this.$refs.authenticateStep.validate()) return;
-      this.loading = true;
       const response = await postLogin({
         email: this.authenticate.email.value,
         password: this.authenticate.password.value,
         cookie: true
       });
-      this.loading = false;
       if (!response) return;
       if (response.status === 200) {
         this.setConfig(response.data.config);
@@ -244,13 +244,11 @@ export default {
     async doRegister() {
       this.$refs.registerPasswordConfirm.blur();
       if (!this.$refs.registerStep.validate()) return;
-      this.loading = true;
       const response = await postRegister({
         email: this.register.email.value,
         password: this.register.password.value,
         name: this.register.name.value
       });
-      this.loading = false;
       if (!response) return;
       if (response.status === 200) {
         this.clearFields();

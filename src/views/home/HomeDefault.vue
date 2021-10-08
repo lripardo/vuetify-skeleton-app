@@ -11,7 +11,7 @@
         </v-row>
         <v-row>
           <v-col :key="i" v-for="(item, i) in items" cols="12" sm="6" md="6" lg="4">
-            <v-card class="fill-height">
+            <v-card class="fill-height" flat rounded>
               <v-card-title>{{ item.title }}</v-card-title>
               <v-card-text>
                 <v-container>
@@ -59,8 +59,10 @@ export default {
   },
   name: 'HomeDefault',
   components: {AppNavBar},
-  computed: mapState({
-    user: state => state.config.user
-  })
+  computed: {
+    ...mapState({
+      user: state => state.config.user
+    })
+  }
 }
 </script>

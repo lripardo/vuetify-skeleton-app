@@ -1,5 +1,11 @@
 <template>
   <v-app>
+    <v-overlay :value="overlay" absolute z-index="6">
+      <v-progress-circular
+          indeterminate
+          size="64"
+      ></v-progress-circular>
+    </v-overlay>
     <v-dialog v-model="confirmationShow"
               persistent
               style="z-index: 1000"
@@ -27,17 +33,26 @@
         </v-btn>
       </template>
     </v-snackbar>
-    <router-view v-if="render"/>
+    <template v-if="render">
+      <error v-if="handlerError"/>
+      <update v-else-if="handlerUpdate"/>
+      <forbidden v-else-if="handlerForbidden"/>
+      <router-view v-else/>
+    </template>
   </v-app>
 </template>
 
 <script>
-import {mapState, mapActions} from 'vuex';
+import {mapState, mapActions, mapGetters} from 'vuex';
 import {fetchInitialData} from '@/lib/backend/http';
-import {goToHome, goToLogin, goToChangePassword, goToError, goToForbidden} from '@/lib/redirects';
+import {goToHome, goToLogin, goToChangePassword} from '@/lib/redirects';
+import Error from '@/views/handlers/Error';
+import Update from '@/views/handlers/Update';
+import Forbidden from '@/views/handlers/Forbidden';
 
 export default {
   name: 'App',
+  components: {Forbidden, Update, Error},
   data() {
     return {
       render: false
@@ -67,13 +82,20 @@ export default {
       alertColor: state => state.alert.color,
       confirmationShowState: state => state.confirmation.show,
       confirmationTitle: state => state.confirmation.title,
-      confirmationText: state => state.confirmation.text
-    })
+      confirmationText: state => state.confirmation.text,
+      overlay: state => state.overlay.overlay
+    }),
+    ...mapGetters('handlers', {
+      handlerError: 'handlerError',
+      handlerUpdate: 'handlerUpdate',
+      handlerForbidden: 'handlerForbidden'
+    }),
   },
   methods: {
     ...mapActions('config', ['setConfig']),
     ...mapActions('alert', ['closeAlert', 'showAlert', 'setShowAlert']),
     ...mapActions('confirmation', ['closeConfirmation', 'setShowConfirmation', 'executeYesConfirmation']),
+    ...mapActions('handlers', ['setHandlerError', 'setHandlerUpdate', 'setHandlerForbidden']),
     finish(finishAction) {
       if (finishAction) {
         finishAction();
@@ -81,26 +103,24 @@ export default {
       this.render = true;
     },
     async startApp() {
-      console.log(this.$route)
       const response = await fetchInitialData();
-      if (!response) return this.finish(goToError);
-      if (response.status === 200) {
-        this.setConfig(response.data);
-        if (response.data.user.has_to_change_password) {
-          return this.finish(goToChangePassword);
-        }
-        if (this.$route.name === 'login') {
-          return this.finish(goToHome);
-        }
-        if (this.$route.meta.roles.length && !this.$route.meta.roles.includes(response.data.user.role)) {
-          return this.finish(goToForbidden);
-        }
-      } else if (response.status === 401) {
-        if (!this.$route.meta.all) {
+      if (response) {
+        if (response.status === 200) {
+          this.setConfig(response.data);
+          if (response.data.user.has_to_change_password) {
+            return this.finish(goToChangePassword);
+          }
+          if (this.$route.name === 'login') {
+            return this.finish(goToHome);
+          }
+          if (this.$route.meta.roles.length && !this.$route.meta.roles.includes(response.data.user.role)) {
+            return this.finish(this.setHandlerForbidden);
+          }
+        } else if (response.status === 401) {
           return this.finish(goToLogin);
+        } else {
+          return this.finish(this.setHandlerError);
         }
-      } else {
-        return this.finish(goToError);
       }
       this.finish();
     }
