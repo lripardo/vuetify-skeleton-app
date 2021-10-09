@@ -3,51 +3,28 @@
     <app-nav-bar title-bar="Conta" action-menu :back-route="goToHome"/>
 
     <v-main>
-      <v-container fluid>
-        <v-row justify="center">
-          <v-col cols="12" md="8">
-            <v-card flat outlined>
-              <v-container fluid>
-                <v-row no-gutters>
-                  <v-col class="item" cols="12">
-                    <v-container>
-                      <v-row>
-                        <v-col cols="3">
-                          <span class="caption grey--text">NOME</span>
-                        </v-col>
-                        <v-col cols="6">
-                          <span class="heading">{{ user.name }}</span>
-                        </v-col>
-                        <v-col cols="3">
-                          <v-icon>mdi-chevron-right</v-icon>
-                        </v-col>
-                      </v-row>
-                    </v-container>
+      <v-card class="ma-3" flat outlined>
+        <v-container>
+          <v-row no-gutters>
+            <v-col :key="i" v-for="(item, i) in items" cols="12">
+              <v-container class="item" v-if="item" @click="item.action">
+                <v-row>
+                  <v-col cols="3">
+                    <span class="caption grey--text">{{ item.title }}</span>
                   </v-col>
-                  <v-col cols="12">
-                    <v-divider/>
+                  <v-col cols="6">
+                    <span class="heading">{{ item.value }}</span>
                   </v-col>
-                  <v-col class="item" cols="12" @click="goToChangePassword">
-                    <v-container>
-                      <v-row>
-                        <v-col cols="3">
-                          <span class="caption grey--text">SENHA</span>
-                        </v-col>
-                        <v-col cols="6">
-                          <span class="heading">••••••••</span>
-                        </v-col>
-                        <v-col cols="3">
-                          <v-icon>mdi-chevron-right</v-icon>
-                        </v-col>
-                      </v-row>
-                    </v-container>
+                  <v-col cols="3">
+                    <v-icon>mdi-chevron-right</v-icon>
                   </v-col>
                 </v-row>
               </v-container>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
+              <v-divider v-else/>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card>
     </v-main>
   </div>
 </template>
@@ -69,7 +46,26 @@ export default {
   computed: {
     ...mapState({
       user: state => state.config.user
-    })
+    }),
+    items() {
+      return [
+        {
+          title: 'NOME',
+          value: this.user.name,
+          action: () => {
+          }
+        },
+        null,
+        {
+          title: 'SENHA',
+          value: '••••••••',
+          action: this.goToChangePassword
+        }
+      ]
+    },
+    isDarkMode() {
+      return this.$vuetify.theme.dark;
+    }
   }
 }
 </script>
