@@ -4,7 +4,7 @@
 
     <v-main class="fill-height">
       <v-container class="fill-height" fluid>
-        <v-row justify="center" align="center">
+        <v-row justify="center">
           <v-col cols="12" md="6" lg="5">
             <v-form ref="form">
               <v-container fluid>
