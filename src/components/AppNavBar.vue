@@ -1,20 +1,22 @@
 <template>
   <div>
-    <v-navigation-drawer v-if="mainMenu" v-model="drawer" width="350" app temporary>
-      <v-list dense>
-        <template v-for="(item, i) in mainMenuItems">
-          <v-divider :key="i" v-if="!item"/>
-          <v-list-item :key="i" v-else @click="closeDrawerOnClick(item.click)">
-            <v-list-item-action>
-              <v-icon color="primary">{{ item.icon }}</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-      </v-list>
-    </v-navigation-drawer>
+    <slot name="menu-drawer">
+      <v-navigation-drawer v-if="mainMenu" v-model="drawer" width="350" app temporary>
+        <v-list dense>
+          <template v-for="(item, i) in mainMenuItems">
+            <v-divider :key="i" v-if="!item"/>
+            <v-list-item :key="i" v-else @click="closeDrawerOnClick(item.click)">
+              <v-list-item-action>
+                <v-icon color="primary">{{ item.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-list>
+      </v-navigation-drawer>
+    </slot>
 
     <v-app-bar :color="$vuetify.theme.dark ? '' : 'primary'" app dark flat>
       <v-app-bar-nav-icon v-if="backRoute" @click="backClick">
