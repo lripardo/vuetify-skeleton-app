@@ -2,8 +2,8 @@
   <div class="fill-height">
     <app-nav-bar title-bar="Alterar senha" :back-route="backRoute"/>
 
-    <v-main class="fill-height">
-      <v-container class="fill-height" fluid>
+    <v-main>
+      <v-container fluid>
         <v-row justify="center">
           <v-col cols="12" md="6" lg="5">
             <v-form ref="form">
