@@ -2,25 +2,6 @@
   <div>
     <v-navigation-drawer v-if="mainMenu" v-model="drawer" width="350" app temporary>
       <v-list dense>
-        <v-list-item two-line>
-          <v-list-item-avatar>
-            <img src="../assets/logo.png" alt="logo"/>
-          </v-list-item-avatar>
-
-          <v-list-item-content>
-            <v-list-item-subtitle>
-              {{ user.name }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle>
-              {{ user.email }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle>
-              {{ `VERSÃO ${version} ${git}` }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-        <v-divider></v-divider>
-        <v-divider/>
         <template v-for="(item, i) in mainMenuItems">
           <v-divider :key="i" v-if="!item"/>
           <v-list-item :key="i" v-else @click="closeDrawerOnClick(item.click)">
@@ -44,17 +25,29 @@
         <slot name="append-title-icon"></slot>
       </v-toolbar-title>
       <div v-if="actionMenu" class="flex-grow-1"/>
-      <v-menu v-if="actionMenu" class="elevation-0" transition="slide-x-transition" :min-width="150" rounded bottom left>
+      <v-menu v-if="actionMenu" transition="slide-x-transition" :min-width="150" rounded bottom left>
         <template v-slot:activator="{ on }">
           <v-btn icon v-on="on">
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
         </template>
-        <v-list outlined flat>
-          <v-list-item v-for="(item, i) in actionMenuItems" :key="i" @click="item.click">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
+        <v-card class="text-center" flat outlined>
+          <v-card-text>
+            <v-avatar class="mb-3">
+              <v-img :src="require('@/assets/logo.png')"/>
+            </v-avatar>
+            <div class="font-weight-bold">{{ user.name }}</div>
+            <div class="mb-5">{{ user.email }}</div>
+            <div>versão {{ version }}:{{ git }}</div>
+          </v-card-text>
+          <v-divider/>
+          <v-card-actions>
+            <v-spacer/>
+            <v-btn :color="isDarkMode ? '' : 'primary'" text @click="logout">
+              Sair
+            </v-btn>
+          </v-card-actions>
+        </v-card>
       </v-menu>
     </v-app-bar>
   </div>
@@ -64,8 +57,6 @@
 import {mapActions, mapState} from 'vuex';
 import {version} from '../../package';
 import {goToLogout} from '@/lib/redirects';
-
-const LOGOUT = 'Sair';
 
 export default {
   name: 'AppNavBar',
@@ -99,11 +90,7 @@ export default {
   data() {
     return {
       drawer: null,
-      version: version,
-      actionMenuItems: [{
-        title: LOGOUT,
-        click: this.logout
-      }]
+      version: version
     }
   },
   methods: {
@@ -125,6 +112,9 @@ export default {
     }),
     git() {
       return process.env.VUE_APP_GIT_HASH || 'Dev';
+    },
+    isDarkMode() {
+      return this.$vuetify.theme.dark;
     }
   }
 }
