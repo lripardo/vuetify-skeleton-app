@@ -1,24 +1,38 @@
 <template>
   <div>
-    <slot name="menu-drawer">
-      <v-navigation-drawer v-if="mainMenu" v-model="drawer" width="350" app temporary>
-        <v-list dense>
-          <template v-for="(item, i) in mainMenuItems">
-            <v-divider :key="i" v-if="!item"/>
-            <v-list-item :key="i" v-else @click="closeDrawerOnClick(item.click)">
-              <v-list-item-action>
-                <v-icon color="primary">{{ item.icon }}</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
+    <v-navigation-drawer v-if="mainMenu" v-model="drawer" width="250" app temporary>
+      <template v-slot:prepend>
+        <slot name="navigation-drawer-prepend"></slot>
+      </template>
+      <v-list dense>
+        <template v-for="(item, i) in mainMenuItems">
+          <v-divider :key="i" v-if="!item"/>
+          <v-list-item :key="i" v-else @click="closeDrawerOnClick(item.click)">
+            <v-list-item-action>
+              <v-icon :color="isDarkMode ? '' : 'primary'">{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+      </v-list>
+      <template v-slot:append>
+        <v-list v-if="mainMenuItemsAppend.length" dense>
+          <v-divider/>
+          <v-list-item :key="i" v-for="(item, i) in mainMenuItemsAppend" @click="closeDrawerOnClick(item.click)">
+            <v-list-item-action>
+              <v-icon :color="isDarkMode ? '' : 'primary'">{{ item.icon }}</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
-      </v-navigation-drawer>
-    </slot>
+      </template>
+    </v-navigation-drawer>
 
-    <v-app-bar :color="$vuetify.theme.dark ? '' : 'primary'" app dark flat>
+    <v-app-bar :color="isDarkMode ? '' : 'primary'" app dark flat>
       <v-app-bar-nav-icon v-if="backRoute" @click="backClick">
         <v-icon>mdi-arrow-left</v-icon>
       </v-app-bar-nav-icon>
@@ -84,6 +98,11 @@ export default {
       default: null
     },
     mainMenuItems: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
+    mainMenuItemsAppend: {
       type: Array,
       required: false,
       default: () => []
