@@ -1,5 +1,5 @@
 <template>
-  <handler title="Atualização disponível" subtitle="Atualize a página (CRTL+R) para obter a nova versão"/>
+  <handler title="Atualização disponível" subtitle="Atualize a página (CRTL+SHIFT+R) para obter a nova versão"/>
 </template>
 
 <script>
